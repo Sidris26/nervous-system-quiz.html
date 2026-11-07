@@ -1,0 +1,443 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Nervous System Quiz</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout: one centered column (44rem). Slim sticky header with an action-potential trace and progress bar, then a single question card with full-width answer buttons. */
+:root{
+  --bg:#EDF2F5; --surface:#FFFFFF; --ink:#10212B; --muted:#566B77; --line:#D2DDE3;
+  --accent:#0B6E8E; --accent-ink:#FFFFFF; --accent-soft:#DCEEF4;
+  --good:#17824F; --good-soft:#DDF2E6; --bad:#B93A2E; --bad-soft:#F8E0DC; --warn:#9A6A12;
+  --font-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --font-body:'Instrument Sans','Segoe UI',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B161D; --surface:#122530; --ink:#E5EEF2; --muted:#8CA3AF; --line:#25404E;
+    --accent:#58B9D8; --accent-ink:#06222C; --accent-soft:#16384A;
+    --good:#4FC58A; --good-soft:#123A2A; --bad:#F27D6F; --bad-soft:#44201C; --warn:#E2B04A;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B161D; --surface:#122530; --ink:#E5EEF2; --muted:#8CA3AF; --line:#25404E;
+  --accent:#58B9D8; --accent-ink:#06222C; --accent-soft:#16384A;
+  --good:#4FC58A; --good-soft:#123A2A; --bad:#F27D6F; --bad-soft:#44201C; --warn:#E2B04A;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--font-body); font-size:16px; line-height:1.5;
+  padding-block:0 3rem;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top, 0px); z-index:10; background:var(--bg)}
+.app{max-width:44rem; margin:0 auto}
+button{font:inherit; color:inherit; cursor:pointer}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+h1,h2,h3{font-family:var(--font-display); text-wrap:balance; margin:0; line-height:1.15}
+.mono{font-family:var(--font-mono); font-variant-numeric:tabular-nums}
+
+/* header */
+.top{position:sticky; top:env(safe-area-inset-top, 0px); z-index:5; background:var(--bg); padding-block:.75rem .6rem; border-bottom:1px solid var(--line)}
+.top-row{display:flex; align-items:center; justify-content:space-between; gap:.75rem}
+.brand{display:flex; align-items:center; gap:.6rem; font-family:var(--font-display); font-weight:700; font-size:1.05rem; min-width:0}
+.trace{width:2.6rem; height:1.15rem; color:var(--accent); flex:none}
+.top-actions{display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; justify-content:flex-end}
+.chip{font-family:var(--font-mono); font-size:.78rem; color:var(--muted); white-space:nowrap}
+.chip b{color:var(--ink); font-weight:500}
+.linkbtn{background:none; border:1px solid var(--line); border-radius:.4rem; padding:.3rem .6rem; font-size:.82rem; color:var(--ink)}
+.linkbtn:hover{border-color:var(--accent); color:var(--accent)}
+.bar{margin-top:.6rem; height:.3rem; background:var(--line); border-radius:99px; overflow:hidden}
+.bar > span{display:block; height:100%; background:var(--accent); width:0; transition:width .25s}
+
+/* map */
+.map{margin-top:1rem; background:var(--surface); border:1px solid var(--line); border-radius:.6rem; padding:.9rem}
+.map-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(2.35rem,1fr)); gap:.35rem}
+.map-grid button{border:1px solid var(--line); background:var(--bg); border-radius:.35rem; padding:.3rem 0; font-family:var(--font-mono); font-size:.74rem; color:var(--muted)}
+.map-grid button.ok{background:var(--good-soft); border-color:var(--good); color:var(--good)}
+.map-grid button.no{background:var(--bad-soft); border-color:var(--bad); color:var(--bad)}
+.map-grid button.cur{outline:2px solid var(--accent); outline-offset:1px; color:var(--ink)}
+.legend{display:flex; gap:1rem; flex-wrap:wrap; margin-top:.7rem; font-size:.78rem; color:var(--muted)}
+
+/* question card */
+.card{margin-top:1.1rem; background:var(--surface); border:1px solid var(--line); border-radius:.75rem; padding:1.25rem}
+.qmeta{display:flex; align-items:center; justify-content:space-between; gap:.75rem; flex-wrap:wrap}
+.qnum{font-family:var(--font-mono); font-size:.8rem; color:var(--muted)}
+.tag{font-family:var(--font-mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; padding:.2rem .5rem; border-radius:.3rem; background:var(--accent-soft); color:var(--accent)}
+.qtext{font-size:1.28rem; font-family:var(--font-display); font-weight:500; line-height:1.3; margin:.9rem 0 1.1rem; text-wrap:pretty; max-width:42rem}
+.opts{display:flex; flex-direction:column; gap:.55rem}
+.opt{display:flex; align-items:flex-start; gap:.75rem; width:100%; text-align:left; background:var(--bg); border:1.5px solid var(--line); border-radius:.55rem; padding:.7rem .85rem; min-width:0}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt .mark{flex:none; width:1.45rem; height:1.45rem; border:1.5px solid var(--muted); display:grid; place-items:center; font-family:var(--font-mono); font-size:.72rem; color:var(--muted); margin-top:.05rem}
+.opt[role="radio"] .mark{border-radius:50%}
+.opt[role="checkbox"] .mark{border-radius:.3rem}
+.opt .txt{flex:1; min-width:0; overflow-wrap:anywhere}
+.opt .res{flex:none; font-family:var(--font-mono); font-size:.7rem; text-transform:uppercase; letter-spacing:.05em; margin-top:.2rem}
+.opt.sel{border-color:var(--accent); background:var(--accent-soft)}
+.opt.sel .mark{border-color:var(--accent); background:var(--accent); color:var(--accent-ink)}
+.opt.good{border-color:var(--good); background:var(--good-soft)}
+.opt.good .mark{border-color:var(--good); background:var(--good); color:var(--surface)}
+.opt.good .res{color:var(--good)}
+.opt.bad{border-color:var(--bad); background:var(--bad-soft)}
+.opt.bad .mark{border-color:var(--bad); background:var(--bad); color:var(--surface)}
+.opt.bad .res{color:var(--bad)}
+.opt.missed{border-color:var(--good); border-style:dashed}
+.opt.missed .res{color:var(--good)}
+.opt.dim{opacity:.6}
+.opt:disabled{cursor:default}
+.hint{margin:.8rem 0 0; font-size:.82rem; color:var(--muted)}
+
+.fb{margin-top:1.1rem; padding:.9rem 1rem; border-radius:.55rem; border-left:4px solid var(--good); background:var(--good-soft)}
+.fb.no{border-left-color:var(--bad); background:var(--bad-soft)}
+.fb strong{font-family:var(--font-display); font-size:1.02rem}
+.fb p{margin:.3rem 0 0; font-size:.95rem; max-width:40rem}
+.actions{display:flex; gap:.6rem; margin-top:1.1rem; flex-wrap:wrap}
+.btn{border:1.5px solid var(--line); background:var(--surface); border-radius:.55rem; padding:.65rem 1.1rem; font-weight:600}
+.btn:hover:not(:disabled){border-color:var(--accent); color:var(--accent)}
+.btn.primary{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
+.btn.primary:hover:not(:disabled){filter:brightness(1.08); color:var(--accent-ink)}
+.btn:disabled{opacity:.45; cursor:not-allowed}
+
+/* start + results */
+.hero{padding-top:2.2rem}
+.hero .trace{width:5rem; height:2.2rem}
+.hero h1{font-size:clamp(2rem,6vw,2.9rem); font-weight:700; margin-top:.8rem}
+.hero p.lede{font-size:1.08rem; color:var(--muted); max-width:34rem; margin:.8rem 0 0}
+.counts{display:flex; gap:.6rem; flex-wrap:wrap; margin-top:1.3rem}
+.counts span{border:1px solid var(--line); background:var(--surface); border-radius:.4rem; padding:.3rem .6rem; font-family:var(--font-mono); font-size:.8rem}
+.how{margin:1.4rem 0 0; padding:0; list-style:none; display:grid; gap:.5rem; max-width:36rem; color:var(--muted); font-size:.95rem}
+.how li{padding-left:1.1rem; position:relative}
+.how li::before{content:""; position:absolute; left:0; top:.6em; width:.45rem; height:2px; background:var(--accent)}
+.how b{color:var(--ink); font-weight:600}
+
+.score{display:flex; align-items:baseline; gap:.9rem; flex-wrap:wrap; margin-top:1rem}
+.score .big{font-family:var(--font-display); font-size:3.4rem; font-weight:700; line-height:1}
+.score .of{color:var(--muted)}
+.types{display:grid; grid-template-columns:repeat(auto-fit,minmax(10rem,1fr)); gap:.6rem; margin-top:1.2rem}
+.types div{border:1px solid var(--line); border-radius:.5rem; padding:.7rem .85rem; background:var(--bg)}
+.types .lbl{font-size:.78rem; color:var(--muted)}
+.types .val{font-family:var(--font-mono); font-size:1.15rem}
+.missed-list{margin-top:1.4rem; display:grid; gap:.5rem}
+.missed-list h2{font-size:1.15rem; margin-bottom:.3rem}
+details{border:1px solid var(--line); border-radius:.55rem; background:var(--surface)}
+summary{padding:.7rem .9rem; cursor:pointer; display:flex; gap:.7rem; align-items:flex-start}
+summary .n{font-family:var(--font-mono); font-size:.78rem; color:var(--bad); flex:none; margin-top:.2rem}
+summary .q{min-width:0; overflow-wrap:anywhere}
+details .body{padding:0 .9rem .9rem 2.9rem; font-size:.93rem}
+details .body p{margin:.35rem 0 0}
+details .body .ans{color:var(--good); font-weight:600}
+@media (max-width:480px){
+  .card{padding:1rem}
+  .qtext{font-size:1.15rem}
+  .brand span.name{display:none}
+  details .body{padding-left:.9rem}
+}
+@media (prefers-reduced-motion: reduce){ .bar > span{transition:none} }
+</style>
+
+<div class="app" id="app"></div>
+
+<script>
+(function(){
+/*Q-START*/
+const mc=(q,o,c,e)=>({t:'mc',q,o,c:[c],e});
+const tf=(q,a,e)=>({t:'tf',q,o:['True','False'],c:[a?0:1],e});
+const sa=(q,o,c,e)=>({t:'sa',q,o,c,e});
+const Q=[
+mc("Which two parts make up the central nervous system (CNS)?",["Brain and spinal cord","Brain and cranial nerves","Spinal cord and spinal nerves","Brain and ganglia"],0,"The CNS is the brain and spinal cord. Cranial nerves, spinal nerves, and ganglia belong to the PNS."),
+tf("The peripheral nervous system includes peripheral nerves, cranial nerves, spinal nerves, and ganglia.",true,"That is the structural (by location) definition of the PNS."),
+mc("Which description fits the somatic nervous system?",["Conscious motor commands and sensory information you are aware of","Unconscious control of internal organs","Local control of the digestive tract","Reflexes that never involve the CNS"],0,"The somatic NS handles conscious motor commands and sensations you notice, like feeling your hands are cold. The autonomic NS is unconscious and involuntary, mainly for internal organs."),
+sa("Select all targets of the autonomic nervous system (ANS).",["Smooth muscle","Cardiac muscle","Glands","Adipose tissue","Skeletal muscle"],[0,1,2,3],"The ANS regulates smooth muscle, cardiac muscle, glandular secretions, and adipose tissue at the subconscious level. Skeletal muscle is the target of the somatic NS."),
+tf("The afferent division of the PNS carries motor commands from the CNS to muscles and glands.",false,"That describes the efferent division (E = exit). The afferent division (A = arrival) brings sensory information to the CNS."),
+mc("Which division of the ANS slows the heart rate and is described as \"rest and digest\"?",["Parasympathetic division","Sympathetic division","Somatic nervous system","Afferent division"],0,"Parasympathetic slows the heart rate (rest and digest). Sympathetic accelerates it (fight or flight)."),
+tf("The enteric nervous system can start and coordinate many visceral reflexes locally, without instructions from the CNS.",true,"The ENS is a network of neurons in the walls of the digestive tract. Sympathetic and parasympathetic divisions influence it, but it can act on its own."),
+mc("About how many neurons does the enteric nervous system contain?",["About 100 million","About 10 million","About 500,000","About 20 billion"],0,"The ENS has about 100 million neurons, at least as many as the spinal cord."),
+tf("Most neurons lack centrioles, so they cannot divide or replace themselves if lost to injury or disease.",true,"Neurons are postmitotic and lack centrioles, which is why damage is so hard to repair."),
+sa("Select all places where neural stem cells stay active in adults.",["The nose (regenerating olfactory receptors)","The hippocampus (memory storage)","The spinal cord","Skeletal muscle"],[0,1],"Neural stem cells are typically inactive, except in the nose and the hippocampus."),
+mc("What is the perikaryon?",["The cytoplasm surrounding the nucleus of the cell body","The long process that carries action potentials","The fine terminal branches of the axon","The plasma membrane of the axon"],0,"Peri- means around and karyon means nucleus. The perikaryon contains neurofilaments, neurotubules, mitochondria, and Nissl bodies."),
+mc("Nissl bodies are clusters of which organelles?",["Free and fixed ribosomes and rough ER","Mitochondria and Golgi apparatus","Neurofilaments and neurotubules","Lysosomes and secretory vesicles"],0,"Nissl bodies synthesize proteins and stain darkly with cresyl violet."),
+tf("Nissl bodies give white matter its color in the brain and spinal cord.",false,"Nissl bodies give gray matter its gray color."),
+mc("Dendritic spines make up what share of a neuron's surface area?",["80 to 90%","10 to 20%","About 50%","Less than 5%"],0,"Spines are where neurons receive information, and they make up 80 to 90% of the surface area."),
+mc("What is the axon hillock?",["The thickened region where the axon joins the cell body","A side branch of the axon","The fine terminal branches of the axon","The gap between two Schwann cells"],0,"The axon hillock connects the cell body to the initial segment of the axon. Side branches are collaterals, and fine terminal branches are telodendria."),
+sa("Select all terms that name a part of the axon or its endings.",["Axoplasm","Axolemma","Collaterals","Telodendria","Perikaryon"],[0,1,2,3],"Axoplasm is the axon's cytoplasm, the axolemma is its plasma membrane, collaterals are side branches, and telodendria are fine terminal branches. The perikaryon belongs to the cell body."),
+tf("Kinesin carries materials retrograde, from the axon terminal back toward the cell body.",false,"Kinesin moves materials anterograde (forward, away from the cell body). Dynein is retrograde. Memory trick: Kinesin keeps going forward, Dynein drags it back."),
+mc("Which motor protein moves materials retrograde, toward the cell body?",["Dynein","Kinesin","Neurofilament","Neurotubule"],0,"Dynein promotes retrograde movement. Retrograde flow delivers debris or unusual chemicals to the cell body, where they may turn genes on or off."),
+mc("About how fast is fast axonal transport at its maximum?",["Up to about 1000 mm per day","A few mm per day","About 1 m per second","About 10 m per day"],0,"Fast flow runs up to about 1000 mm per day (average around 300 mm). Slow flow is only a few mm per day."),
+tf("Axonal transport uses ATP and moves materials in both directions at the same time.",true,"Molecular motors (kinesin and dynein) use ATP to move along neurotubules in both directions at once."),
+mc("Which structural class of neuron is small, has many dendrites, and has no obvious axon?",["Anaxonic","Bipolar","Unipolar","Multipolar"],0,"Anaxonic neurons are found in the brain and special sense organs, and their functions are poorly understood."),
+mc("Which structural class is the most common neuron in the CNS?",["Multipolar","Bipolar","Unipolar","Anaxonic"],0,"Multipolar neurons have two or more dendrites and a single axon. All motor neurons that control skeletal muscles are multipolar."),
+mc("Most sensory neurons of the PNS are which structural class?",["Unipolar","Bipolar","Multipolar","Anaxonic"],0,"Unipolar neurons have dendrites and axon fused into one process, with the cell body off to one side."),
+tf("Bipolar neurons are common and found throughout the body.",false,"Bipolar neurons are rare. They are found in special sense organs, relaying information about sight, smell, or hearing."),
+sa("According to the figure, which structural classes are found in the special sense organs?",["Anaxonic","Bipolar","Unipolar","Multipolar"],[0,1],"The figure labels anaxonic and bipolar neurons as found in our special senses."),
+tf("All motor neurons that control skeletal muscles are multipolar.",true,"Multipolar neurons carry motor commands, for example from the spinal cord to the small muscles that move the toes."),
+mc("In a bipolar neuron, where does the cell body sit?",["Between the dendrite and the axon","Off to one side of one fused process","At the tip of the axon","Inside the axon hillock"],0,"Bipolar means both ends: one dendrite and one axon, with the cell body between them."),
+mc("Interneurons make up about what share of all neurons?",["99%","50%","10%","1%"],0,"There are about 20 billion interneurons. Sensory neurons number about 10 million and motor neurons about half a million."),
+tf("Cell bodies of sensory neurons are located in peripheral sensory ganglia.",true,"A ganglion is a collection of neuron cell bodies in the PNS."),
+sa("Select all three receptor groups of sensory neurons.",["Interoceptors","Exteroceptors","Proprioceptors","Motoceptors"],[0,1,2],"Interoceptors monitor internal systems, exteroceptors monitor the outside world, and proprioceptors monitor position and movement of muscles and joints."),
+mc("In an autonomic pathway, what is the axon that runs from the autonomic ganglion to the effector called?",["Postganglionic fiber","Preganglionic fiber","Collateral","Afferent fiber"],0,"The first axon (CNS to ganglion) is the preganglionic fiber. The second (ganglion to effector) is the postganglionic fiber."),
+tf("Somatic motor neurons innervate skeletal muscle and are under conscious control.",true,"The axon runs in a peripheral nerve to the muscle at a neuromuscular junction."),
+mc("What is the main function of interneurons?",["Integration: distributing sensory information and coordinating motor activity","Carrying motor commands to skeletal muscle","Detecting stimuli at the skin","Producing myelin"],0,"The more complex the response, the more interneurons are involved."),
+sa("Interneurons are involved in which of the following?",["Distributing sensory information","Coordinating motor activity","Memory, planning, and learning","Carrying sensory information from receptors to the CNS"],[0,1,2],"Carrying sensory information from receptors to the CNS is the job of sensory neurons."),
+mc("Which neuroglia are the largest and most numerous in the CNS?",["Astrocytes","Microglia","Oligodendrocytes","Ependymal cells"],0,"Astrocytes are star-shaped with expanded feet and are connected to each other by gap junctions."),
+mc("Which neuroglia create the blood brain barrier by wrapping their expanded feet around capillaries?",["Astrocytes","Microglia","Satellite cells","Schwann cells"],0,"The BBB is selectively permeable and isolates the CNS from the general circulation."),
+sa("Select all neuroglia found in the CNS.",["Astrocytes","Ependymal cells","Oligodendrocytes","Microglia","Schwann cells"],[0,1,2,3],"Schwann cells are PNS neuroglia."),
+sa("Select all neuroglia found in the PNS.",["Satellite cells","Schwann cells","Astrocytes","Microglia"],[0,1],"The PNS has two types of neuroglia: satellite cells and Schwann cells."),
+mc("Which neuroglia line the ventricles and central canal and help produce, circulate, and monitor cerebrospinal fluid?",["Ependymal cells","Astrocytes","Microglia","Satellite cells"],0,"Ependymal cells line the ventricles of the brain and the central canal of the spinal cord."),
+mc("Which cells myelinate axons in the CNS?",["Oligodendrocytes","Schwann cells","Astrocytes","Microglia"],0,"Myelin comes from oligodendrocytes in the CNS and Schwann cells in the PNS."),
+mc("Microglia come from which kind of stem cells?",["Mesodermal stem cells related to those that make monocytes and macrophages","Neural crest cells that form Schwann cells","Ependymal cells lining the ventricles","Astrocytes that migrate from the capillaries"],0,"Microglia appear early in embryonic development and migrate into the CNS as the nervous system forms."),
+tf("Microglia are the largest and most numerous neuroglia in the CNS.",false,"Microglia are the least numerous and smallest. They are phagocytic cells that act as a wandering janitorial service and police force."),
+tf("A Schwann cell myelinates segments of several axons, while an oligodendrocyte myelinates just one axon.",false,"It is the reverse. A myelinating Schwann cell (PNS) myelinates one axon. An oligodendrocyte (CNS) myelinates segments of several axons."),
+mc("Which neuroglia surround neuron cell bodies in ganglia and regulate the fluid around them?",["Satellite cells","Schwann cells","Oligodendrocytes","Ependymal cells"],0,"Satellite cells regulate interstitial fluid around the neurons, much like astrocytes do in the CNS."),
+sa("Select all functions of astrocytes.",["Maintain the blood brain barrier","Provide a three-dimensional structural framework for the CNS","Repair damaged nervous tissue","Guide neuron development in the embryonic brain","Form myelin sheaths around CNS axons"],[0,1,2,3],"Myelinating CNS axons is the job of oligodendrocytes."),
+tf("A nonmyelinating Schwann cell can enclose segments of several unmyelinated axons.",true,"A series of Schwann cells is needed to enclose an axon along its entire length."),
+mc("What is Wallerian degeneration?",["Degeneration of the axon distal to an injury, with macrophages cleaning up debris","Loss of myelin caused by an autoimmune attack","Scar tissue formation by astrocytes in the CNS","Growth of new neurons in the hippocampus"],0,"Memory trick: Wallerian = Waste removal."),
+tf("After a PNS injury, Schwann cells degenerate along with the damaged axon.",false,"Schwann cells do not degenerate. They proliferate and form a solid cellular cord that follows the path of the original axon."),
+sa("Select all changes that occur in the cell body of an injured neuron.",["Nissl bodies disperse","The nucleus moves away from its central location","The rate of protein synthesis increases","The cell body divides to replace the neuron"],[0,1,2],"Neurons cannot divide. If the neuron recovers, the cell body returns to its normal appearance."),
+mc("A crushing injury is relieved after an hour or two. What is the expected outcome?",["The neuron recovers within a few weeks","The axon is permanently cut","The cell body dies immediately","Recovery takes several years"],0,"More severe or prolonged pressure has effects similar to cutting the axon."),
+mc("Which cells form a guide cord that supports axon regrowth in the PNS?",["Schwann cells","Astrocytes","Oligodendrocytes","Microglia"],0,"Memory trick: Schwann = Scaffold. In the CNS, astrocytes hinder repair."),
+tf("The axon has its best chance of reaching the right destination when the cut edges of the nerve bundle remain in contact.",true,"If the axon stops growing or wanders off in a new direction, normal function will not return."),
+sa("Select all reasons CNS regeneration is limited.",["Many more axons are likely to be involved","Astrocytes produce scar tissue that can block axon growth","Astrocytes release chemicals that block axon regrowth","Schwann cells form a guide cord in the CNS"],[0,1,2],"Schwann cells are PNS neuroglia, so they are not forming a guide cord in the CNS."),
+mc("Which is the most common demyelinating disease?",["Multiple sclerosis","Diphtheria","Heavy-metal poisoning","Wallerian degeneration"],0,"MS is also the most common disabling neurological disease of young adults."),
+tf("Diphtheria damages Schwann cells and destroys myelin sheaths in the PNS.",true,"Diphtheria is relatively rare thanks to the vaccine (the D in DPT)."),
+sa("Select all causes or examples of demyelination named in the guide.",["Heavy-metal poisoning (arsenic, lead, mercury)","Diphtheria","Multiple sclerosis","Synaptic fatigue"],[0,1,2],"Synaptic fatigue is a short-term weakening of a synapse, not damage to myelin."),
+sa("Select all true statements about multiple sclerosis.",["Myelin becomes the target of an autoimmune reaction","The first attack typically occurs at age 20 to 40","Incidence in women is twice that of men","Corticosteroid or interferon injections cure it","It affects only the PNS"],[0,1,2],"There is no cure, but injections have slowed progression in some patients. MS affects the optic nerve, brain, and spinal cord."),
+mc("What is the typical resting membrane potential (RMP) of a neuron?",["About -70 mV","About -90 mV","0 mV","About +30 mV"],0,"The minus sign shows the inner surface of the membrane is negative with respect to the outside."),
+mc("Which ion distribution is correct for a resting neuron?",["High Na⁺ outside, high K⁺ inside","High K⁺ outside, high Na⁺ inside","High Na⁺ and K⁺ outside, neither inside","Equal Na⁺ and K⁺ on both sides"],0,"Memory trick: Na⁺ = Not inside (high outside). K⁺ = Keeps inside."),
+mc("The sodium-potassium exchange pump moves ions in what ratio?",["Ejects 3 Na⁺ for every 2 K⁺ brought in","Ejects 2 Na⁺ for every 3 K⁺ brought in","Brings in 3 Na⁺ for every 2 K⁺ ejected","Moves 1 Na⁺ and 1 K⁺ in the same direction"],0,"The pump stabilizes the RMP when Na⁺ entry and K⁺ loss through passive channels is 3:2."),
+tf("An axon at its resting membrane potential is said to be polarized, with the inside negative relative to the outside.",true,"Polarized means about -70 mV with the inside negative."),
+mc("What is the K⁺ equilibrium potential?",["About -90 mV","About -70 mV","About 0 mV","About +66 mV"],0,"The RMP of -70 mV is close to it. The difference is mainly because Na⁺ continuously leaks into the cell."),
+mc("What is the Na⁺ equilibrium potential?",["About +66 mV","About -70 mV","About -90 mV","0 mV"],0,"If the membrane were freely permeable to Na⁺, it would keep entering until the inside became positive enough to stop further net entry."),
+sa("Select all reasons the RMP is nowhere near +66 mV, the Na⁺ equilibrium potential.",["Resting permeability to Na⁺ is very low","Ion pumps eject Na⁺ as fast as it enters","Na⁺ is mostly inside the cell at rest","Na⁺ has no chemical gradient"],[0,1],"Na⁺ is high outside and very low inside, so both gradients push it in."),
+tf("At the resting membrane potential, the chemical and electrical gradients for K⁺ point in opposite directions.",true,"The chemical gradient drives K⁺ out while the electrical gradient pulls it back in, so the net force is small."),
+mc("What is an equilibrium potential?",["The membrane potential at which there is no net movement of a particular ion","The potential at which an action potential begins","The voltage after the Na⁺/K⁺ pump stops","The charge difference in a stimulated cell"],0,"An ion's equilibrium potential shows its contribution to the RMP."),
+mc("A membrane potential of -65 mV compared with -70 mV is:",["Slightly less negative (a small depolarization)","Slightly more negative (a small hyperpolarization)","Exactly the K⁺ equilibrium potential","At threshold"],0,"Moving from -70 toward 0 mV is depolarization."),
+sa("Select all characteristics of graded potentials.",["Most changed at the site of stimulation, and the effect decreases with distance","Spread passively through local currents","Can be depolarizing or hyperpolarizing","A stronger stimulus gives a greater change and a larger area affected","All-or-none, with the same size every time"],[0,1,2,3],"All-or-none is a property of action potentials."),
+mc("Opening gated K⁺ channels in a neuron produces:",["Hyperpolarization, because K⁺ leaves the cell","Depolarization, because K⁺ enters the cell","Threshold, because K⁺ rushes in","No change in membrane potential"],0,"Opening Na⁺ channels gives depolarization (positive charges enter). Opening K⁺ channels gives hyperpolarization (positive charges leave)."),
+tf("Graded potentials fade with distance because the cytosol resists ion movement and some Na⁺ leaks back out.",true,"At some distance the effect is undetectable."),
+tf("A shift from -70 mV to -80 mV is called depolarization.",false,"Depolarization is a shift toward 0 or positive. A shift to a more negative value such as -80 mV is hyperpolarization."),
+mc("What is repolarization?",["Restoring the RMP after depolarization","A shift to a more negative potential than the RMP","The opening of voltage-gated Na⁺ channels","Reaching threshold"],0,"Repolarization involves ion movement through channels and ion pumps, especially the Na⁺/K⁺ pump."),
+mc("What is the typical threshold of an axon?",["-60 mV to -55 mV","-90 mV to -80 mV","-30 mV to 0 mV","+30 mV"],0,"That is a depolarization of 10 to 15 mV from RMP. Memory trick: -70 to -55 means you need a +15 mV push to fire."),
+mc("What happens in step 2 of the action potential?",["Voltage-gated Na⁺ channels open and Na⁺ rushes in","Voltage-gated K⁺ channels open and K⁺ rushes in","Na⁺ inactivation gates close","The Na⁺/K⁺ pump stops"],0,"The membrane potential shoots toward positive values."),
+mc("Which events start repolarization (step 3 of the action potential)?",["Na⁺ inactivation gates close and voltage-gated K⁺ channels open","Chemically gated Na⁺ channels open","Voltage-gated Ca²⁺ channels open","All K⁺ channels close"],0,"Na⁺ entry stops and K⁺ flows out, so the membrane potential falls back toward negative."),
+mc("Why does a brief hyperpolarization follow an action potential?",["K⁺ channels close slowly, so extra K⁺ keeps leaving","Na⁺ channels reopen too early","The Na⁺/K⁺ pump stops working","Chloride floods into the cell"],0,"The membrane then returns to the RMP."),
+tf("The axon hillock responds to depolarization by firing an action potential, just like the rest of the axon.",false,"The axon hillock, like the rest of the cell body, lacks voltage-gated Na⁺ channels. Its graded depolarization sends local currents to the initial segment."),
+tf("A stronger stimulus above threshold produces a larger action potential.",false,"Action potentials are all-or-none and independent of stimulus strength, like pulling the trigger harder does not change the bullet."),
+sa("Select all true statements about action potentials.",["They are always depolarizing","Depolarization to threshold must occur first","A refractory period occurs","They propagate along the membrane without decreasing in strength","Summation occurs"],[0,1,2,3],"Table 12-3: graded potentials show summation. Action potentials do not."),
+mc("Why can an action potential move only forward along an axon?",["The segment behind it is in the absolute refractory period","Only the end of the axon has Na⁺ channels","Dendrites block backward flow","Myelin only allows ions to flow one way"],0,"Memory trick: it is like the stadium wave, which only goes forward because the segment behind is locked out."),
+tf("Continuous propagation along an unmyelinated axon moves at about 1 m/sec (roughly 2 mph).",true,"It appears to move in a series of tiny steps, about 1 msec at each location."),
+mc("What is saltatory propagation?",["The action potential jumps from node to node along a myelinated axon","A chain reaction in adjacent segments of an unmyelinated axon","Passive spread of a graded potential","Movement of vesicles along neurotubules"],0,"Saltare means leaping. Memory trick: Saltatory = Skips."),
+sa("Select all advantages of saltatory propagation.",["It is faster than continuous propagation","It uses proportionately less energy","Less membrane surface area is involved","Fewer Na⁺ ions must be pumped out of the cytoplasm","It occurs in unmyelinated axons"],[0,1,2,3],"Saltatory propagation occurs in myelinated axons."),
+mc("Why can't continuous propagation occur along a myelinated internode?",["Myelin increases resistance, so ions cross the membrane readily only at the nodes","Myelin removes all Na⁺ from the axon","Internodes have no axolemma","Myelin makes the axon too thin"],0,"Only the nodes, with their voltage-gated ion channels, can respond to a depolarizing stimulus."),
+mc("In the guide's messaging analogy, which axon type is the urgent \"instant messaging\"?",["Type A","Type B","Type C","None of them"],0,"Type A is urgent, Type B is less urgent (e-mail), and Type C is least urgent (snail mail)."),
+tf("Only about one-third of sensory axons are myelinated, and most sensory information arrives on Type C fibers.",true,"Making every axon large and myelinated would make nerves the size of garden hoses."),
+mc("In an electrical synapse, how are the presynaptic and postsynaptic membranes joined?",["By gap junctions made of connexons","By a 20 nm synaptic cleft filled with ACh","By synaptic vesicles","By axoaxonic contacts"],0,"The membranes are separated by only 2 nm, and the cells act as if they shared one membrane."),
+tf("Electrical synapses are the most abundant type of synapse in the adult nervous system.",false,"Electrical synapses are extremely rare in the adult CNS and PNS. Chemical synapses are by far the most abundant."),
+sa("Select all types of neuron-to-neuron chemical synapses.",["Axoaxonic","Axosomatic","Axodendritic","Neuromuscular"],[0,1,2],"The neuromuscular junction is a neuron-to-muscle synapse."),
+mc("In a cholinergic synapse, what triggers exocytosis of ACh-filled vesicles?",["Ca²⁺ entering the axon terminal through voltage-gated channels","Na⁺ entering the postsynaptic cell","AChE breaking down ACh","K⁺ leaving the axon terminal"],0,"Ca²⁺ is then removed from the cytosol by active transport, which stops release quickly."),
+sa("Select all places where ACh is released.",["All neuromuscular junctions involving skeletal muscle fibers","Many synapses in the CNS","All neuron-to-neuron synapses in the PNS","Neuromuscular and neuroglandular junctions of the parasympathetic division","Only at synapses in the spinal cord"],[0,1,2,3],"ACh is the most widespread and best-studied neurotransmitter."),
+tf("Acetylcholinesterase breaks ACh into acetate and choline, and the axon terminal reabsorbs the choline to make more ACh.",true,"This is why the effects of ACh are temporary."),
+mc("Most of the 0.2 to 0.5 msec synaptic delay comes from:",["Ca²⁺ influx and neurotransmitter release","Diffusion across the 20 nm cleft","Axonal transport","Breakdown of ACh by AChE"],0,"The cleft is so narrow that diffusion adds little delay. This is why reflexes with few synapses are fast."),
+mc("What causes synaptic fatigue?",["ACh is used faster than it can be resynthesized and replaced","The postsynaptic cell runs out of Na⁺","AChE stops working","Voltage-gated Ca²⁺ channels are permanently destroyed"],0,"Intense, repeated stimulation leads to less ACh per action potential and a weaker response until ACh is restocked."),
+sa("Select all neurotransmitters that act directly by opening or closing chemically gated ion channels (ionotropic).",["ACh","Glutamate","Aspartate","Dopamine","Histamine"],[0,1,2],"Dopamine and histamine act indirectly through G proteins (Figure 12-17b)."),
+mc("In the G protein (metabotropic) pathway, what does adenylate cyclase do?",["Converts ATP to cAMP, a second messenger","Breaks down ACh","Opens Na⁺ channels directly","Pumps Ca²⁺ out of the terminal"],0,"cAMP may open ion channels, activate intracellular enzymes, or both."),
+tf("A single EPSP (about 0.5 mV) is enough to trigger an action potential at the axon hillock.",false,"The initial segment must be depolarized by at least 10 mV, so summation is needed."),
+mc("What is spatial summation?",["Simultaneous stimuli at different locations have a cumulative effect","Rapid repeated stimuli at a single synapse have a cumulative effect","Loss of the effect of stimuli as they spread","Cancelling of an EPSP by an IPSP"],0,"Bucket analogy: 10 friends emptying their buckets at once fill the tub immediately. Temporal summation is one bucket repeated."),
+mc("An EPSP and an IPSP of equal size arrive at the same time. What happens to the membrane potential?",["It stays at the resting level","It depolarizes to threshold","It hyperpolarizes","An action potential fires"],0,"Equal size but opposite effects cancel out. If the EPSP is larger the net effect is depolarization, and if the IPSP is larger it is hyperpolarization."),
+sa("Select all true statements about presynaptic inhibition.",["GABA is released at an axoaxonic synapse","Voltage-gated Ca²⁺ channels in the axon terminal are inhibited","Less neurotransmitter is released when an action potential arrives","Serotonin keeps Ca²⁺ channels open longer"],[0,1,2],"Serotonin keeps Ca²⁺ channels open longer in presynaptic facilitation, which increases neurotransmitter release.")
+];
+/*Q-END*/
+
+const TYPE_LABEL={mc:'Multiple choice',tf:'True or false',sa:'Select all that apply'};
+const LOGO='<svg class="trace" viewBox="0 0 64 28" aria-hidden="true"><path d="M1 20 H16 L20 18 L25 3 L31 25 L36 20 H63" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>';
+const KEY='ns-quiz-v1';
+const $app=document.getElementById('app');
+let S=null, screen='start', showMap=false;
+
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function load(){try{const r=localStorage.getItem(KEY);if(!r)return null;const o=JSON.parse(r);return (o&&Array.isArray(o.order)&&o.order.length&&o.ans)?o:null}catch(e){return null}}
+function wipe(){try{localStorage.removeItem(KEY)}catch(e){}}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function range(n){return Array.from({length:n},(_,i)=>i)}
+function ensure(qi){
+  if(!S.ans[qi]){const q=Q[qi];S.ans[qi]={perm:q.t==='tf'?[0,1]:shuffle(range(q.o.length)),sel:[],done:false,ok:false}}
+  return S.ans[qi];
+}
+function stats(){
+  let done=0,right=0;
+  S.order.forEach(qi=>{const a=S.ans[qi];if(a&&a.done){done++;if(a.ok)right++}});
+  return {done,right,total:S.order.length};
+}
+function startRun(indexes,doShuffle){
+  S={order:doShuffle?shuffle(indexes):indexes.slice(),pos:0,ans:{}};
+  screen='quiz';showMap=false;save();render();window.scrollTo(0,0);
+}
+function sameSet(a,b){return a.length===b.length&&a.every(x=>b.includes(x))}
+function commit(qi){
+  const a=S.ans[qi],q=Q[qi];
+  a.done=true;a.ok=sameSet(a.sel,q.c);save();
+}
+
+function startHTML(){
+  const saved=load();
+  let resume='';
+  if(saved){
+    const d=saved.order.filter(qi=>saved.ans[qi]&&saved.ans[qi].done).length;
+    if(d>0&&d<saved.order.length){resume='<button class="btn" data-act="resume">Resume ('+d+' of '+saved.order.length+' answered)</button>'}
+  }
+  const c={mc:0,tf:0,sa:0};Q.forEach(q=>c[q.t]++);
+  return '<section class="hero">'+LOGO+
+  '<h1>Nervous System Quiz</h1>'+
+  '<p class="lede">'+Q.length+' questions from Chapter 12 on nervous tissue: divisions of the nervous system, neurons, neuroglia, injury and repair, resting and action potentials, and synapses.</p>'+
+  '<div class="counts"><span>'+c.mc+' multiple choice</span><span>'+c.tf+' true or false</span><span>'+c.sa+' select all</span></div>'+
+  '<ul class="how"><li><b>Multiple choice and true or false:</b> click an answer to lock it in.</li>'+
+  '<li><b>Select all that apply:</b> click every correct option, then press Check answer. You need the exact set.</li>'+
+  '<li>Every question shows an explanation. Use the question map to jump around. Keys 1 to 5 pick an option and Enter moves on.</li></ul>'+
+  '<div class="actions"><button class="btn primary" data-act="start-guide">Start in guide order</button><button class="btn" data-act="start-shuffle">Shuffle questions</button>'+resume+'</div></section>';
+}
+
+function topHTML(){
+  const st=stats();
+  return '<header class="top"><div class="top-row"><div class="brand">'+LOGO+'<span class="name">Nervous System Quiz</span></div>'+
+  '<div class="top-actions"><span class="chip"><b>'+st.right+'</b> correct · <b>'+st.done+'</b>/'+st.total+'</span>'+
+  '<button class="linkbtn" data-act="map" aria-expanded="'+showMap+'">Question map</button>'+
+  '<button class="linkbtn" data-act="results">Finish</button></div></div>'+
+  '<div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="'+st.total+'" aria-valuenow="'+st.done+'"><span style="width:'+(st.total?st.done/st.total*100:0)+'%"></span></div></header>';
+}
+
+function mapHTML(){
+  const cells=S.order.map((qi,p)=>{
+    const a=S.ans[qi];let cls='';
+    if(a&&a.done)cls=a.ok?'ok':'no';
+    if(p===S.pos)cls+=' cur';
+    return '<button class="'+cls+'" data-act="jump" data-pos="'+p+'" aria-label="Question '+(p+1)+(a&&a.done?(a.ok?', correct':', incorrect'):'')+'">'+(p+1)+'</button>';
+  }).join('');
+  return '<div class="map"><div class="map-grid">'+cells+'</div><div class="legend"><span>Green: correct</span><span>Red: incorrect</span><span>Outlined: current</span></div></div>';
+}
+
+function quizHTML(){
+  const qi=S.order[S.pos],q=Q[qi],a=ensure(qi),last=S.pos===S.order.length-1;
+  const role=q.t==='sa'?'checkbox':'radio';
+  const opts=a.perm.map((orig,k)=>{
+    const isSel=a.sel.includes(orig),isC=q.c.includes(orig);
+    let cls='opt',res='';
+    if(a.done){
+      if(isC&&isSel){cls+=' good';res='Correct'}
+      else if(isC){cls+=q.t==='sa'?' missed':' good';res=q.t==='sa'?'Missed':'Answer'}
+      else if(isSel){cls+=' bad';res='Wrong'}
+      else cls+=' dim';
+    }else if(isSel)cls+=' sel';
+    const mark=q.t==='sa'?(isSel?'✓':''):String.fromCharCode(65+k);
+    const markHtml=(q.t==='sa'&&a.done&&isC&&!isSel)?'':mark;
+    return '<button class="'+cls+'" role="'+role+'" aria-checked="'+isSel+'" data-act="opt" data-k="'+k+'"'+(a.done?' disabled':'')+'><span class="mark">'+(q.t==='sa'?mark:mark)+'</span><span class="txt">'+q.o[orig]+'</span>'+(res?'<span class="res">'+res+'</span>':'')+'</button>';
+  }).join('');
+  let fb='';
+  if(a.done){
+    fb='<div class="fb '+(a.ok?'':'no')+'" role="status"><strong>'+(a.ok?'Correct':'Not quite')+'</strong><p>'+q.e+'</p></div>';
+  }
+  let acts='<div class="actions">';
+  if(S.pos>0)acts+='<button class="btn" data-act="prev">Back</button>';
+  if(!a.done&&q.t==='sa')acts+='<button class="btn primary" data-act="check"'+(a.sel.length?'':' disabled')+'>Check answer</button>';
+  if(a.done)acts+='<button class="btn primary" data-act="next">'+(last?'See results':'Next question')+'</button>';
+  acts+='</div>';
+  const hint=(!a.done&&q.t==='sa')?'<p class="hint">Pick every correct option, then press Check answer.</p>':'';
+  return topHTML()+(showMap?mapHTML():'')+
+  '<article class="card"><div class="qmeta"><span class="qnum">Question '+(S.pos+1)+' of '+S.order.length+'</span><span class="tag">'+TYPE_LABEL[q.t]+'</span></div>'+
+  '<h2 class="qtext">'+q.q+'</h2><div class="opts" role="'+(q.t==='sa'?'group':'radiogroup')+'" aria-label="Answer options">'+opts+'</div>'+hint+fb+acts+'</article>';
+}
+
+function resultsHTML(){
+  const st=stats();
+  const pct=st.total?Math.round(st.right/st.total*100):0;
+  const by={mc:{n:0,r:0},tf:{n:0,r:0},sa:{n:0,r:0}};
+  const missed=[],skipped=[];
+  S.order.forEach(qi=>{
+    const a=S.ans[qi],q=Q[qi];
+    by[q.t].n++;
+    if(a&&a.done){if(a.ok)by[q.t].r++;else missed.push(qi)}else skipped.push(qi);
+  });
+  const typeCards=['mc','tf','sa'].map(t=>by[t].n?'<div><div class="lbl">'+TYPE_LABEL[t]+'</div><div class="val">'+by[t].r+' / '+by[t].n+'</div></div>':'').join('');
+  const list=missed.map(qi=>{
+    const q=Q[qi];
+    const ans=q.c.map(i=>q.o[i]).join(' · ');
+    return '<details><summary><span class="n mono">#'+(qi+1)+'</span><span class="q">'+q.q+'</span></summary><div class="body"><p class="ans">Answer: '+ans+'</p><p>'+q.e+'</p></div></details>';
+  }).join('');
+  const retryCount=missed.length+skipped.length;
+  return '<section class="card" style="margin-top:1.5rem"><span class="tag">Results</span>'+
+  '<div class="score"><span class="big mono">'+pct+'%</span><span class="of mono">'+st.right+' of '+st.total+' correct'+(skipped.length?' · '+skipped.length+' unanswered':'')+'</span></div>'+
+  '<div class="types">'+typeCards+'</div>'+
+  '<div class="actions">'+(retryCount?'<button class="btn primary" data-act="retry">Retry missed and unanswered ('+retryCount+')</button>':'')+
+  (skipped.length||S.order.some(qi=>!(S.ans[qi]&&S.ans[qi].done))?'<button class="btn" data-act="back">Back to quiz</button>':'')+
+  '<button class="btn" data-act="restart">New attempt, all '+Q.length+'</button></div></section>'+
+  (missed.length?'<section class="missed-list"><h2>Missed questions</h2>'+list+'</section>':'<p class="hint" style="margin-top:1.2rem">No missed questions in this attempt.</p>');
+}
+
+function render(){
+  $app.innerHTML=screen==='start'?startHTML():screen==='quiz'?quizHTML():resultsHTML();
+}
+
+function pick(k){
+  if(screen!=='quiz')return;
+  const qi=S.order[S.pos],q=Q[qi],a=ensure(qi);
+  if(a.done||k>=a.perm.length)return;
+  const orig=a.perm[k];
+  if(q.t==='sa'){
+    const i=a.sel.indexOf(orig);
+    if(i>=0)a.sel.splice(i,1);else a.sel.push(orig);
+    render();
+  }else{
+    a.sel=[orig];commit(qi);render();
+  }
+}
+function check(){
+  const qi=S.order[S.pos],a=ensure(qi);
+  if(a.done||!a.sel.length)return;
+  commit(qi);render();
+}
+function next(){
+  if(S.pos<S.order.length-1){S.pos++;showMap=false;save();render();window.scrollTo(0,0)}
+  else{screen='results';save();render();window.scrollTo(0,0)}
+}
+
+$app.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;
+  const act=b.dataset.act;
+  if(act==='start-guide')startRun(range(Q.length),false);
+  else if(act==='start-shuffle')startRun(range(Q.length),true);
+  else if(act==='resume'){S=load();if(S){screen='quiz';const first=S.order.findIndex(qi=>!(S.ans[qi]&&S.ans[qi].done));S.pos=first<0?0:first;render();window.scrollTo(0,0)}}
+  else if(act==='opt')pick(+b.dataset.k);
+  else if(act==='check')check();
+  else if(act==='next')next();
+  else if(act==='prev'){if(S.pos>0){S.pos--;save();render();window.scrollTo(0,0)}}
+  else if(act==='map'){showMap=!showMap;render()}
+  else if(act==='jump'){S.pos=+b.dataset.pos;showMap=false;save();render();window.scrollTo(0,0)}
+  else if(act==='results'){screen='results';render();window.scrollTo(0,0)}
+  else if(act==='back'){const first=S.order.findIndex(qi=>!(S.ans[qi]&&S.ans[qi].done));if(first>=0)S.pos=first;screen='quiz';render();window.scrollTo(0,0)}
+  else if(act==='retry'){
+    const redo=S.order.filter(qi=>!(S.ans[qi]&&S.ans[qi].done&&S.ans[qi].ok));
+    startRun(redo,true);
+  }
+  else if(act==='restart'){startRun(range(Q.length),true)}
+});
+
+document.addEventListener('keydown',e=>{
+  if(screen!=='quiz'||e.metaKey||e.ctrlKey||e.altKey)return;
+  const tag=document.activeElement&&document.activeElement.tagName;
+  const k=e.key;
+  if(/^[1-5]$/.test(k)){pick(+k-1)}
+  else if(/^[a-e]$/i.test(k)){pick(k.toLowerCase().charCodeAt(0)-97)}
+  else if(k==='Enter'&&tag!=='BUTTON'){
+    const qi=S.order[S.pos],q=Q[qi],a=ensure(qi);
+    if(a.done)next();else if(q.t==='sa')check();
+  }
+});
+
+render();
+})();
+</script>
+
+</body></html>
